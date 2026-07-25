@@ -4,12 +4,10 @@ using Microsoft.Extensions.Configuration;
 
 namespace MaisonAeternum.IntegrationTests;
 
-/// <summary>
-/// Points the app at a dedicated LocalDB database instead of the dev one, so integration tests
-/// never touch (or get polluted by) whatever data is sitting in the developer's own database.
-/// Real SQL Server (not EF Core InMemory) is used deliberately — Program.cs runs
-/// Database.MigrateAsync() at startup, which the InMemory provider does not support.
-/// </summary>
+// Points the app at a dedicated Postgres database instead of the dev one, so integration tests
+// never touch (or get polluted by) whatever data is sitting in the developer's own database.
+// A real Postgres instance (not EF Core InMemory) is used deliberately — Program.cs runs
+// Database.MigrateAsync() at startup, which the InMemory provider does not support.
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -21,7 +19,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:DefaultConnection"] =
-                    "Server=(localdb)\\MSSQLLocalDB;Database=MaisonAeternumTests;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+                    "Host=localhost;Port=5433;Database=MaisonAeternumTests;Username=postgres;Password=postgres"
             });
         });
     }

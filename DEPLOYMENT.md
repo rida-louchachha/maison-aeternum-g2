@@ -14,19 +14,23 @@ is needed after deploy.
 
 ## 1. Database
 
-This project uses SQL Server (`UseSqlServer`), which is not one of Railway's
-built-in managed databases (Railway's plugins are Postgres/MySQL/Mongo/Redis).
-Pick one:
+This project uses PostgreSQL (`UseNpgsql`) — one of Railway's built-in managed
+databases, so this is a couple of clicks:
 
-- **Deploy SQL Server as a second Railway service** — "New Service" → "Docker
-  Image" → `mcr.microsoft.com/mssql/server:2022-latest`, with env vars
-  `ACCEPT_EULA=Y` and `MSSQL_SA_PASSWORD=<strong password>`. Railway gives it an
-  internal hostname you reference from the web service's connection string.
-- **Use an external managed SQL Server** (Azure SQL Database free/serverless
-  tier is the easiest match) and point the connection string at it.
+- In the Railway project, **New → Database → Add PostgreSQL**. Railway
+  provisions it and exposes connection variables automatically (host, port,
+  user, password, database name — visible on that service's Variables tab).
+- Reference it from the web service's `ConnectionStrings__DefaultConnection`
+  (see below), built from those values.
 
-Either way, the connection string just needs to reach a SQL Server instance —
-nothing else in the app is Azure- or Railway-specific.
+> The project originally targeted SQL Server, but Railway has no built-in
+> SQL Server plugin, and running Microsoft's SQL Server Docker image yourself
+> needs ~2GB RAM — more than fits in Railway's free/hobby tier (confirmed by
+> an actual OOM crash on that tier during setup). Postgres runs comfortably
+> in that tier, and EF Core's provider abstraction meant swapping
+> `Microsoft.EntityFrameworkCore.SqlServer` for
+> `Npgsql.EntityFrameworkCore.PostgreSQL` only touched `DependencyInjection.cs`,
+> the migrations, and connection strings — no repository/service code changed.
 
 ## 2. Required environment variables
 
@@ -35,7 +39,7 @@ Set these on the Railway **web** service (Settings → Variables). Railway auto-
 
 | Variable | Purpose | Required? |
 |---|---|---|
-| `ConnectionStrings__DefaultConnection` | SQL Server connection string (double underscore = ASP.NET Core config nesting for `ConnectionStrings:DefaultConnection`) | Yes |
+| `ConnectionStrings__DefaultConnection` | Npgsql connection string, e.g. `Host=<pg-host>;Port=5432;Database=<db>;Username=<user>;Password=<pass>` (double underscore = ASP.NET Core config nesting for `ConnectionStrings:DefaultConnection`) | Yes |
 | `Ai__HeyGen__ApiKey` | HeyGen avatar API key | Only if using HeyGen (leave unset to fall back to the mock avatar) |
 | `Ai__HeyGen__VoiceId` | HeyGen voice id | Only if using HeyGen |
 | `Ai__Anam__ApiKey` | Anam.ai API key | Only if switched to Anam (see `AiMentorServiceCollectionExtensions.cs`) |
@@ -52,8 +56,8 @@ a real talking-head video.
 2. In Railway: **New Project → Deploy from GitHub repo**, pick the repo.
 3. Railway detects the `Dockerfile` at the repo root and builds from it — no
    extra build configuration needed.
-4. Add the SQL Server service (or external DB) from step 1, then set the
-   environment variables from step 2 on the web service.
+4. Add the Postgres database from step 1, then set the environment variables
+   from step 2 on the web service.
 5. Deploy. On first boot the app creates the schema and seeds demo data
    (admin login: `admin@maisonaeternum.com` / `MaisonAdmin!2026` — **change
    this password after first login on a public deployment**).
@@ -65,6 +69,6 @@ a real talking-head video.
 ```bash
 docker build -t maison-aeternum .
 docker run -p 8080:8080 \
-  -e ConnectionStrings__DefaultConnection="<your SQL Server connection string>" \
+  -e ConnectionStrings__DefaultConnection="Host=<pg-host>;Port=5432;Database=<db>;Username=<user>;Password=<pass>" \
   maison-aeternum
 ```
