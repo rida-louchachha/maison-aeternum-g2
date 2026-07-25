@@ -1,0 +1,102 @@
+@model MaisonAeternum.Application.Catalog.Models.FormationFormDto
+@{
+    var isEdit = Model.Id > 0;
+    var categories = (List<MaisonAeternum.Application.Catalog.Models.SelectOptionDto>)ViewBag.Categories;
+    var trainers = (List<MaisonAeternum.Application.Catalog.Models.SelectOptionDto>)ViewBag.Trainers;
+}
+
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" class="form-maison glass-card p-4" style="max-width: 720px;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+    <div class="mb-3">
+        <label asp-for="Title">Title</label>
+        <input asp-for="Title" class="form-control-maison" placeholder="Gear Train Fundamentals" />
+        <span asp-validation-for="Title" class="field-validation-error"></span>
+    </div>
+
+    <div class="row">
+        <div class="col-6 mb-3">
+            <label asp-for="CategoryId">Category</label>
+            <select asp-for="CategoryId" class="form-control-maison" asp-items="@(new SelectList(categories, "Id", "Name"))">
+                <option value="">— select —</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="field-validation-error"></span>
+        </div>
+        <div class="col-6 mb-3">
+            <label asp-for="TrainerId">Trainer</label>
+            <select asp-for="TrainerId" class="form-control-maison" asp-items="@(new SelectList(trainers, "Id", "Name"))">
+                <option value="">— select —</option>
+            </select>
+            <span asp-validation-for="TrainerId" class="field-validation-error"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6 mb-3">
+            <label asp-for="Difficulty">Difficulty</label>
+            <select asp-for="Difficulty" class="form-control-maison" asp-items="Html.GetEnumSelectList<MaisonAeternum.Domain.Enums.DifficultyLevel>()"></select>
+        </div>
+        <div class="col-6 mb-3">
+            <label asp-for="EstimatedMinutes">Estimated minutes</label>
+            <input asp-for="EstimatedMinutes" type="number" class="form-control-maison" />
+            <span asp-validation-for="EstimatedMinutes" class="field-validation-error"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ShortDescription">Short description <span class="text-tertiary-soft">(shown on cards)</span></label>
+        <textarea asp-for="ShortDescription" class="form-control-maison" rows="2"></textarea>
+        <span asp-validation-for="ShortDescription" class="field-validation-error"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FullDescription">Full description</label>
+        <textarea asp-for="FullDescription" class="form-control-maison" rows="4"></textarea>
+        <span asp-validation-for="FullDescription" class="field-validation-error"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PrerequisitesText">Prerequisites</label>
+        <input asp-for="PrerequisitesText" class="form-control-maison" placeholder="No prior formation required." />
+        <span asp-validation-for="PrerequisitesText" class="field-validation-error"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Learning objectives</label>
+        @for (var i = 0; i < Model.Objectives.Count; i++)
+        {
+            <input asp-for="Objectives[i]" class="form-control-maison mb-2" placeholder="Objective @(i + 1)" />
+        }
+        <span asp-validation-for="Objectives" class="field-validation-error"></span>
+    </div>
+
+    <div class="mb-4" style="font-size: 0.9rem;">
+        <label class="d-flex align-items-center gap-2 text-secondary-soft">
+            <input asp-for="HasCertificate" type="checkbox" />
+            Issues a certificate on passing the final exam
+        </label>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn-maison-primary">@(isEdit ? "Save changes" : "Create formation")</button>
+        <a asp-action="Index" class="btn-maison-secondary">Back to list</a>
+    </div>
+</form>
+
+@if (isEdit)
+{
+    <div class="glass-card p-4 mt-3" style="max-width: 720px;">
+        <h3 style="font-size: 1rem;">Modules &amp; Assessments</h3>
+        <p class="text-secondary-soft" style="font-size: 0.85rem;">Manage this formation's modules, content, and quizzes.</p>
+        <div class="d-flex gap-2">
+            <a asp-controller="Modules" asp-action="Index" asp-route-formationId="@Model.Id" class="btn-maison-secondary">
+                <i class="bi bi-collection"></i> Manage modules
+            </a>
+            <a asp-controller="Quizzes" asp-action="ForFormation" asp-route-formationId="@Model.Id" class="btn-maison-secondary">
+                <i class="bi bi-patch-check"></i> Manage final exam
+            </a>
+        </div>
+    </div>
+}

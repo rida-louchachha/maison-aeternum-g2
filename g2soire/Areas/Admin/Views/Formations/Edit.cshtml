@@ -1,0 +1,15 @@
+@model MaisonAeternum.Application.Catalog.Models.FormationFormDto
+@{
+    ViewData["Title"] = "Edit Formation";
+}
+
+<div class="mb-4">
+    <h2 style="font-size: 1.4rem;">Edit Formation</h2>
+    <p class="text-secondary-soft">@Model.Title</p>
+</div>
+
+<partial name="_Form" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

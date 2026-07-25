@@ -1,0 +1,55 @@
+@model List<MaisonAeternum.Application.Catalog.Models.TrainerAdminDto>
+@{
+    ViewData["Title"] = "Trainers";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-size: 1.4rem; margin: 0;">Trainers</h2>
+        <p class="text-secondary-soft mb-0">Master Watchmakers who teach in the Maison.</p>
+    </div>
+    <a asp-action="Create" class="btn-maison-primary"><i class="bi bi-plus-lg"></i> New trainer</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state glass-card">
+        <div class="empty-icon"><i class="bi bi-person-badge"></i></div>
+        <p>No trainers yet. Add the Maison's first Master Watchmaker.</p>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var trainer in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="glass-card p-4 h-100 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div style="font-weight: 600;">@trainer.FullName</div>
+                            <div class="text-tertiary-soft" style="font-size: 0.8rem;">@trainer.Email</div>
+                        </div>
+                        @if (trainer.IsFeatured)
+                        {
+                            <span class="stat-delta up"><i class="bi bi-star-fill"></i> Featured</span>
+                        }
+                    </div>
+                    <p class="text-secondary-soft mt-2 flex-grow-1" style="font-size: 0.85rem;">@trainer.AtelierAffiliation</p>
+                    <div class="d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
+                        <span><i class="bi bi-star-fill" style="color: var(--gold);"></i> @trainer.AverageRating.ToString("0.0")</span>
+                        <span class="text-tertiary-soft">@trainer.YearsOfExperience yrs · @trainer.FormationCount formations</span>
+                    </div>
+                    <div class="d-flex gap-2 mt-3">
+                        <a asp-action="Edit" asp-route-id="@trainer.Id" class="btn-maison-secondary" style="flex:1; text-align:center;">Edit</a>
+                        <form asp-action="Delete" asp-route-id="@trainer.Id" method="post"
+                              onsubmit="return confirm('Remove @trainer.FullName from the Maison\'s trainers?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-maison-ghost" title="Delete"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,93 @@
+/* Maison Aeternum — Admin area shell */
+
+.admin-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: var(--bg-elevated);
+    border-right: 1px solid var(--border-glass);
+    padding: 1.25rem 0.75rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background var(--transition-base), color var(--transition-base);
+}
+
+.admin-nav-link:hover { background: var(--bg-glass); color: var(--text-primary); }
+
+.admin-nav-link.active {
+    background: linear-gradient(120deg, rgba(201,162,75,0.16), rgba(139,92,246,0.10));
+    color: var(--text-primary);
+    border: 1px solid var(--border-glass);
+}
+
+.admin-nav-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.soon-badge {
+    margin-left: auto;
+    font-size: 0.65rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.admin-main {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.admin-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid var(--border-glass);
+    position: sticky;
+    top: 0;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(12px);
+    z-index: 10;
+}
+
+.admin-topbar h1 {
+    font-size: 1.35rem;
+    margin: 0;
+}
+
+.admin-content {
+    padding: 2rem;
+}
+
+@media (max-width: 900px) {
+    .admin-sidebar { display: none; }
+    .admin-content { padding: 1.25rem; }
+    .admin-topbar { padding: 1rem 1.25rem; }
+}

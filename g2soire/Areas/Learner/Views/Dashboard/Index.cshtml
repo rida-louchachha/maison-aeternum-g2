@@ -1,0 +1,61 @@
+@model List<MaisonAeternum.Application.Learning.Models.MyEnrollmentDto>
+@{
+    ViewData["Title"] = "My Formations";
+    var learnerContext = (MaisonAeternum.Application.AiMentor.Models.LearnerContextDto?)ViewBag.LearnerContext;
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+        <div>
+            <h1 style="font-size: 1.9rem;">Welcome back@(learnerContext is null ? "" : $", {learnerContext.FirstName}").</h1>
+            @if (learnerContext is not null)
+            {
+                <p class="text-secondary-soft mb-0">
+                    @learnerContext.GuildRankName
+                    @if (learnerContext.CurrentStreakDays > 0)
+                    {
+                        <span> · <i class="bi bi-fire" style="color: var(--gold);"></i> @learnerContext.CurrentStreakDays-day bench streak</span>
+                    }
+                </p>
+            }
+        </div>
+        <a asp-controller="Formations" asp-action="Index" class="btn-maison-primary"><i class="bi bi-search"></i> Browse formations</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state glass-card">
+            <div class="empty-icon"><i class="bi bi-mortarboard"></i></div>
+            <p>You're not enrolled in any formation yet.</p>
+            <a asp-controller="Formations" asp-action="Index" class="btn-maison-primary mt-2">Explore the catalog</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var enrollment in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <a asp-controller="Formations" asp-action="Details" asp-route-id="@enrollment.FormationId" class="text-decoration-none">
+                        <div class="glass-card h-100 p-4">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: @enrollment.CategoryColorHex; display: inline-block;"></span>
+                                <span class="text-tertiary-soft" style="font-size: 0.78rem; text-transform: uppercase;">@enrollment.CategoryName</span>
+                            </div>
+                            <h3 style="font-size: 1.05rem;">@enrollment.FormationTitle</h3>
+                            <div class="text-tertiary-soft mb-2" style="font-size: 0.8rem;">@enrollment.TrainerName</div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 0.8rem;">
+                                <span class="text-secondary-soft">@enrollment.Status</span>
+                                <span style="font-weight: 600;">@enrollment.ProgressPercentage.ToString("0")%</span>
+                            </div>
+                            <div style="height: 6px; border-radius: 999px; background: var(--bg-glass); overflow: hidden;">
+                                <div style="height: 100%; width: @(enrollment.ProgressPercentage.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: linear-gradient(90deg, var(--gold), var(--teal));"></div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>

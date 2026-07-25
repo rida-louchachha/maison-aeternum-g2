@@ -1,0 +1,55 @@
+@model List<MaisonAeternum.Application.Catalog.Models.ModuleAdminDto>
+@{
+    ViewData["Title"] = "Modules";
+    int formationId = ViewBag.FormationId;
+    string formationTitle = ViewBag.FormationTitle;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a asp-controller="Formations" asp-action="Edit" asp-route-id="@formationId" class="text-tertiary-soft" style="font-size: 0.85rem;">
+            <i class="bi bi-arrow-left"></i> @formationTitle
+        </a>
+        <h2 style="font-size: 1.4rem; margin: 0.25rem 0 0;">Modules</h2>
+    </div>
+    <a asp-action="Create" asp-route-formationId="@formationId" class="btn-maison-primary"><i class="bi bi-plus-lg"></i> New module</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state glass-card">
+        <div class="empty-icon"><i class="bi bi-collection"></i></div>
+        <p>No modules yet. Add the first chapter of this formation.</p>
+    </div>
+}
+else
+{
+    <div class="d-flex flex-column gap-2">
+        @foreach (var module in Model.OrderBy(m => m.DisplayOrder))
+        {
+            <div class="glass-card p-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-tertiary-soft" style="font-size: 0.8rem; width: 24px;">#@module.DisplayOrder</span>
+                    <div>
+                        <div style="font-weight: 500;">@module.Title</div>
+                        <div class="text-tertiary-soft" style="font-size: 0.78rem;">
+                            @module.EstimatedMinutes min · @module.ContentItemCount content items
+                            @if (module.HasQuiz)
+                            {
+                                <span> · <i class="bi bi-patch-question"></i> has quiz</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@module.Id" class="btn-maison-secondary">Manage</a>
+                    <form asp-action="Delete" asp-route-id="@module.Id" asp-route-formationId="@formationId" method="post"
+                          onsubmit="return confirm('Delete module &quot;@module.Title&quot;?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-maison-ghost" title="Delete"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}

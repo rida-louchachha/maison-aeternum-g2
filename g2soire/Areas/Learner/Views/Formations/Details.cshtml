@@ -1,0 +1,103 @@
+@model MaisonAeternum.Application.Learning.Models.FormationLearnerDetailDto
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background: @Model.CategoryColorHex; display: inline-block;"></span>
+                <span class="text-tertiary-soft" style="font-size: 0.8rem; text-transform: uppercase;">@Model.CategoryName</span>
+            </div>
+            <h1 style="font-size: 2rem;">@Model.Title</h1>
+            <p class="text-secondary-soft" style="max-width: 640px;">@Model.FullDescription</p>
+
+            <div class="d-flex flex-wrap gap-3 text-tertiary-soft mb-4" style="font-size: 0.85rem;">
+                <span><i class="bi bi-person"></i> @Model.TrainerName</span>
+                <span><i class="bi bi-bar-chart"></i> @Model.Difficulty</span>
+                <span><i class="bi bi-clock"></i> @Model.EstimatedMinutes min</span>
+                <span><i class="bi bi-star-fill" style="color: var(--gold);"></i> @Model.AverageRating.ToString("0.0")</span>
+            </div>
+
+            @if (!Model.IsEnrolled)
+            {
+                <form asp-action="Enroll" asp-route-id="@Model.FormationId" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-maison-primary">Enroll in this formation</button>
+                </form>
+            }
+            else
+            {
+                <div class="glass-card p-3 mb-4" style="max-width: 420px;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary-soft" style="font-size: 0.85rem;">Your progress</span>
+                        <span style="font-weight: 600;">@Model.ProgressPercentage.ToString("0")%</span>
+                    </div>
+                    <div style="height: 8px; border-radius: 999px; background: var(--bg-glass); overflow: hidden;">
+                        <div style="height: 100%; width: @(Model.ProgressPercentage.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: linear-gradient(90deg, var(--gold), var(--teal));"></div>
+                    </div>
+                </div>
+            }
+
+            <h2 style="font-size: 1.3rem; margin-top: 2rem;">Modules</h2>
+            <div class="d-flex flex-column gap-2 mt-3">
+                @foreach (var module in Model.Modules.OrderBy(m => m.DisplayOrder))
+                {
+                    <div class="glass-card p-3 d-flex justify-content-between align-items-center @(!module.IsUnlocked ? "opacity-50" : "")">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; border-radius: 50%; background: var(--bg-glass);">
+                                @if (module.IsCompleted)
+                                {
+                                    <i class="bi bi-check-lg" style="color: #34d399;"></i>
+                                }
+                                else if (!module.IsUnlocked)
+                                {
+                                    <i class="bi bi-lock" style="color: var(--text-tertiary);"></i>
+                                }
+                                else
+                                {
+                                    <span class="text-tertiary-soft" style="font-size: 0.8rem;">@module.DisplayOrder</span>
+                                }
+                            </div>
+                            <div>
+                                <div style="font-weight: 500;">@module.ModuleTitle</div>
+                                <div class="text-tertiary-soft" style="font-size: 0.78rem;">@module.EstimatedMinutes min · @module.ContentItems.Count items @(module.HasQuiz ? "· quiz" : "")</div>
+                            </div>
+                        </div>
+                        @if (Model.IsEnrolled && module.IsUnlocked)
+                        {
+                            <a asp-controller="Modules" asp-action="Player" asp-route-id="@module.ModuleId" class="btn-maison-secondary">
+                                @(module.IsCompleted ? "Review" : "Start")
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+
+            @if (Model.IsEnrolled && Model.HasFinalExam)
+            {
+                <div class="glass-card p-4 mt-4 d-flex justify-content-between align-items-center"
+                     style="background: linear-gradient(120deg, rgba(201,162,75,0.10), rgba(139,92,246,0.08));">
+                    <div>
+                        <h3 style="font-size: 1.05rem; margin: 0;"><i class="bi bi-patch-check"></i> Bench Trial — Final Exam</h3>
+                        <p class="text-secondary-soft mb-0" style="font-size: 0.85rem;">
+                            @(Model.AllModulesCompleted ? "Ready when you are." : "Complete every module to unlock the final exam.")
+                        </p>
+                    </div>
+                    @if (Model.AllModulesCompleted)
+                    {
+                        <a asp-controller="Quizzes" asp-action="Take" asp-route-quizId="@Model.FinalExamQuizId" class="btn-maison-primary">Begin exam</a>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="glass-card p-4">
+                <h3 style="font-size: 1rem;">Prerequisites</h3>
+                <p class="text-secondary-soft" style="font-size: 0.85rem;">@Model.PrerequisitesText</p>
+            </div>
+        </div>
+    </div>
+</div>

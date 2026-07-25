@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/g2soire/">
+    <Project Path="g2soire/MaisonAeternum.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MaisonAeternum.IntegrationTests/MaisonAeternum.IntegrationTests.csproj" />
+    <Project Path="tests/MaisonAeternum.UnitTests/MaisonAeternum.UnitTests.csproj" />
+  </Folder>
+  <Project Path="MaisonAeternum.Application/MaisonAeternum.Application.csproj" />
+  <Project Path="MaisonAeternum.Common/MaisonAeternum.Common.csproj" />
+  <Project Path="MaisonAeternum.Domain/MaisonAeternum.Domain.csproj" />
+  <Project Path="MaisonAeternum.Infrastructure/MaisonAeternum.Infrastructure.csproj" />
+</Solution>

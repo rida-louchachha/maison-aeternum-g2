@@ -1,0 +1,46 @@
+@model MaisonAeternum.Application.Assessment.Models.QuizAttemptResultDto
+@{
+    ViewData["Title"] = "Results";
+}
+
+<div class="container py-5" style="max-width: 720px;">
+    <div class="glass-card p-4 text-center mb-4" style="background: @(Model.Passed ? "linear-gradient(120deg, rgba(52,211,153,0.12), rgba(45,212,175,0.08))" : "linear-gradient(120deg, rgba(244,113,116,0.10), rgba(139,92,246,0.06))");">
+        <i class="bi @(Model.Passed ? "bi-patch-check-fill" : "bi-arrow-repeat")" style="font-size: 2.2rem; color: @(Model.Passed ? "#34d399" : "var(--gold)");"></i>
+        <h1 style="font-size: 1.6rem; margin: 0.5rem 0 0;">@(Model.Passed ? "Bench Trial Passed" : "Not Quite Yet")</h1>
+        <p class="text-secondary-soft">@Model.QuizTitle</p>
+        <div style="font-family: var(--font-display); font-size: 2.4rem;">@Model.ScorePercentage.ToString("0")%</div>
+        <p class="text-tertiary-soft" style="font-size: 0.85rem;">Passing score: @Model.PassingScore.ToString("0")% · Time taken: @(Model.TimeTakenSeconds / 60)m @(Model.TimeTakenSeconds % 60)s</p>
+
+        @if (Model.CertificateIssued)
+        {
+            <div class="mt-2"><span class="stat-delta up"><i class="bi bi-award"></i> Certificate issued</span></div>
+        }
+        @if (!string.IsNullOrEmpty(Model.NewGuildRankName))
+        {
+            <div class="mt-2"><span class="stat-delta up"><i class="bi bi-stars"></i> Promoted to @Model.NewGuildRankName</span></div>
+        }
+    </div>
+
+    <h2 style="font-size: 1.2rem;">Review</h2>
+    <div class="d-flex flex-column gap-2 mt-3">
+        @foreach (var question in Model.QuestionResults)
+        {
+            <div class="glass-card p-3" style="border-left: 3px solid @(question.IsCorrect ? "#34d399" : "#f47174");">
+                <div class="d-flex justify-content-between align-items-start">
+                    <p style="font-size: 0.92rem; margin: 0; max-width: 80%;">@question.Text</p>
+                    <i class="bi @(question.IsCorrect ? "bi-check-circle-fill" : "bi-x-circle-fill")" style="color: @(question.IsCorrect ? "#34d399" : "#f47174");"></i>
+                </div>
+                <div class="text-tertiary-soft mt-2" style="font-size: 0.8rem;">
+                    Your answer: @string.Join(", ", question.SelectedOptionTexts)
+                    @if (!question.IsCorrect)
+                    {
+                        <div>Correct answer: @string.Join(", ", question.CorrectOptionTexts)</div>
+                    }
+                </div>
+                <p class="text-secondary-soft mt-2 mb-0" style="font-size: 0.85rem;">@question.Explanation</p>
+            </div>
+        }
+    </div>
+
+    <a asp-controller="Dashboard" asp-action="Index" class="btn-maison-primary mt-4">Back to my formations</a>
+</div>

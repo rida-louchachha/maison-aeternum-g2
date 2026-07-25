@@ -1,0 +1,104 @@
+@model MaisonAeternum.Application.Catalog.Models.ModuleFormDto
+@{
+    ViewData["Title"] = "Edit Module";
+    var contentItems = (List<MaisonAeternum.Application.Catalog.Models.ContentItemDto>)ViewBag.ContentItems;
+}
+
+<div class="mb-4">
+    <a asp-action="Index" asp-route-formationId="@Model.FormationId" class="text-tertiary-soft" style="font-size: 0.85rem;">
+        <i class="bi bi-arrow-left"></i> Back to modules
+    </a>
+    <h2 style="font-size: 1.4rem; margin: 0.25rem 0 0;">@Model.Title</h2>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <form asp-action="Edit" method="post" class="form-maison glass-card p-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="FormationId" />
+            <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+            <div class="mb-3">
+                <label asp-for="Title">Title</label>
+                <input asp-for="Title" class="form-control-maison" />
+                <span asp-validation-for="Title" class="field-validation-error"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description">Description</label>
+                <textarea asp-for="Description" class="form-control-maison" rows="3"></textarea>
+                <span asp-validation-for="Description" class="field-validation-error"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-6 mb-4">
+                    <label asp-for="DisplayOrder">Display order</label>
+                    <input asp-for="DisplayOrder" type="number" class="form-control-maison" />
+                </div>
+                <div class="col-6 mb-4">
+                    <label asp-for="EstimatedMinutes">Estimated minutes</label>
+                    <input asp-for="EstimatedMinutes" type="number" class="form-control-maison" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn-maison-primary">Save changes</button>
+        </form>
+
+        <div class="glass-card p-4 mt-3">
+            <h3 style="font-size: 1rem;">Assessment</h3>
+            <p class="text-secondary-soft" style="font-size: 0.85rem;">Manage this module's quiz.</p>
+            <a asp-controller="Quizzes" asp-action="ForModule" asp-route-moduleId="@Model.Id" class="btn-maison-secondary">
+                <i class="bi bi-patch-question"></i> Manage quiz
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="glass-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 style="font-size: 1rem; margin: 0;">Content</h3>
+                <a asp-action="CreateContentItem" asp-route-moduleId="@Model.Id" class="btn-maison-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.9rem;">
+                    <i class="bi bi-plus-lg"></i> Add
+                </a>
+            </div>
+
+            @if (!contentItems.Any())
+            {
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="bi bi-play-circle"></i></div>
+                    <p class="mb-0">No content yet.</p>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-2">
+                    @foreach (var item in contentItems)
+                    {
+                        <div class="d-flex justify-content-between align-items-center p-2" style="border: 1px solid var(--border-glass); border-radius: var(--radius-sm);">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi @(item.Type == MaisonAeternum.Domain.Enums.ContentItemType.Video ? "bi-play-circle" : item.Type == MaisonAeternum.Domain.Enums.ContentItemType.Pdf ? "bi-file-earmark-pdf" : "bi-headphones")"
+                                   style="color: var(--gold);"></i>
+                                <div>
+                                    <div style="font-size: 0.88rem;">@item.Title</div>
+                                    <div class="text-tertiary-soft" style="font-size: 0.75rem;">@item.Type · @item.DurationMinutes min</div>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-1">
+                                <a asp-action="EditContentItem" asp-route-id="@item.Id" class="btn-maison-ghost" style="padding: 0.3rem 0.6rem;"><i class="bi bi-pencil"></i></a>
+                                <form asp-action="DeleteContentItem" asp-route-id="@item.Id" asp-route-moduleId="@Model.Id" method="post" onsubmit="return confirm('Remove this content item?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-maison-ghost" style="padding: 0.3rem 0.6rem;"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

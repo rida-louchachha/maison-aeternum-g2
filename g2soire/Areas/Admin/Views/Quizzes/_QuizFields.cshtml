@@ -1,0 +1,48 @@
+@model MaisonAeternum.Application.Assessment.Models.QuizFormDto
+
+<input type="hidden" asp-for="Id" />
+<input type="hidden" asp-for="FormationId" />
+<input type="hidden" asp-for="ModuleId" />
+<input type="hidden" asp-for="Type" />
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+<div class="mb-3">
+    <label asp-for="Title">Title</label>
+    <input asp-for="Title" class="form-control-maison" />
+    <span asp-validation-for="Title" class="field-validation-error"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Instructions">Instructions</label>
+    <textarea asp-for="Instructions" class="form-control-maison" rows="2"></textarea>
+    <span asp-validation-for="Instructions" class="field-validation-error"></span>
+</div>
+
+<div class="row">
+    <div class="col-4 mb-3">
+        <label asp-for="TimeLimitSeconds">Time limit (seconds)</label>
+        <input asp-for="TimeLimitSeconds" type="number" class="form-control-maison" />
+    </div>
+    <div class="col-4 mb-3">
+        <label asp-for="PassingScore">Passing score (%)</label>
+        <input asp-for="PassingScore" type="number" class="form-control-maison" />
+        <span asp-validation-for="PassingScore" class="field-validation-error"></span>
+    </div>
+    <div class="col-4 mb-3">
+        <label asp-for="MaxAttempts">Max attempts</label>
+        <input asp-for="MaxAttempts" type="number" class="form-control-maison" placeholder="Unlimited" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 mb-3">
+        <label asp-for="QuestionsToServe">Questions served per attempt</label>
+        <input asp-for="QuestionsToServe" type="number" class="form-control-maison" placeholder="All questions" />
+    </div>
+    <div class="col-6 mb-3 d-flex align-items-end">
+        <label class="d-flex align-items-center gap-2 text-secondary-soft mb-0">
+            <input asp-for="RandomizeQuestions" type="checkbox" />
+            Randomize question order
+        </label>
+    </div>
+</div>

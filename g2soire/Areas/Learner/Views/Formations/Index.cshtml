@@ -1,0 +1,62 @@
+@model List<MaisonAeternum.Application.Common.Models.FormationSummaryDto>
+@{
+    ViewData["Title"] = "Formations";
+    var categories = (List<MaisonAeternum.Domain.Entities.Category>)ViewBag.Categories;
+    int? selectedCategoryId = ViewBag.SelectedCategoryId;
+    string? search = ViewBag.Search;
+}
+
+<div class="container py-5">
+    <div class="mb-4">
+        <h1 style="font-size: 1.9rem;">Formations</h1>
+        <p class="text-secondary-soft">Browse the Maison's full catalog and begin your next apprenticeship.</p>
+    </div>
+
+    <form method="get" class="d-flex flex-wrap gap-2 mb-4">
+        <input type="text" name="search" value="@search" placeholder="Search formations..." class="form-control-maison" style="max-width: 280px;" />
+        <select name="categoryId" class="form-control-maison" style="max-width: 240px;" onchange="this.form.submit()">
+            <option value="">All categories</option>
+            @foreach (var category in categories)
+            {
+                <option value="@category.Id" selected="@(selectedCategoryId == category.Id)">@category.Name</option>
+            }
+        </select>
+        <button type="submit" class="btn-maison-secondary">Filter</button>
+        @if (selectedCategoryId.HasValue || !string.IsNullOrWhiteSpace(search))
+        {
+            <a asp-action="Index" class="btn-maison-ghost">Clear</a>
+        }
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state glass-card">
+            <div class="empty-icon"><i class="bi bi-search"></i></div>
+            <p>No formations match your search.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var formation in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <a asp-action="Details" asp-route-id="@formation.Id" class="text-decoration-none">
+                        <div class="glass-card h-100 p-4 d-flex flex-column">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: @formation.CategoryColorHex; display: inline-block;"></span>
+                                <span class="text-tertiary-soft" style="font-size: 0.78rem; text-transform: uppercase;">@formation.CategoryName</span>
+                            </div>
+                            <h3 style="font-size: 1.1rem;">@formation.Title</h3>
+                            <p class="text-secondary-soft flex-grow-1" style="font-size: 0.85rem;">@formation.ShortDescription</p>
+                            <div class="d-flex justify-content-between align-items-center pt-2" style="border-top: 1px solid var(--border-glass); font-size: 0.8rem;">
+                                <span class="text-tertiary-soft"><i class="bi bi-person"></i> @formation.TrainerName</span>
+                                <span style="color: var(--gold);"><i class="bi bi-star-fill"></i> @formation.AverageRating.ToString("0.0")</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>

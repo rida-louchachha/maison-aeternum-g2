@@ -1,0 +1,56 @@
+@model MaisonAeternum.Web.Models.Account.LoginViewModel
+@{
+    ViewData["Title"] = "Sign in";
+    Layout = "_AuthLayout";
+}
+
+<div class="row g-0 align-items-stretch" style="min-height: calc(100vh - 72px);">
+    <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-center p-5" style="background: linear-gradient(160deg, rgba(201,162,75,0.10), rgba(139,92,246,0.08));">
+        <i class="bi bi-clock-history mb-4" style="color: var(--gold); font-size: 2.5rem;"></i>
+        <h2 class="gradient-text" style="font-size: 2.4rem; max-width: 420px;">Every master began as an apprentice.</h2>
+        <p class="text-secondary-soft mt-3" style="max-width: 420px;">Sign in to continue your training at the bench, track your progress, and consult Aurèle.</p>
+    </div>
+
+    <div class="col-lg-6 d-flex align-items-center justify-content-center p-4 p-lg-5">
+        <div class="w-100" style="max-width: 400px;">
+            <h1 style="font-size: 1.8rem;">Sign in</h1>
+            <p class="text-secondary-soft mb-4">Welcome back to Maison Aeternum.</p>
+
+            <form asp-controller="Account" asp-action="Login" method="post" class="form-maison">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ReturnUrl" />
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" class="form-control-maison" placeholder="you@example.com" autocomplete="email" />
+                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                </div>
+
+                <div class="mb-2">
+                    <label asp-for="Password">Password</label>
+                    <input asp-for="Password" class="form-control-maison" placeholder="••••••••" autocomplete="current-password" />
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4" style="font-size: 0.85rem;">
+                    <label class="d-flex align-items-center gap-2 text-secondary-soft">
+                        <input asp-for="RememberMe" type="checkbox" />
+                        Remember me
+                    </label>
+                    <a asp-controller="Account" asp-action="ForgotPassword" class="text-secondary-soft">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-maison-primary w-100">Sign in</button>
+            </form>
+
+            <p class="text-center text-secondary-soft mt-4" style="font-size: 0.9rem;">
+                Not yet a member? <a asp-controller="Account" asp-action="Register" style="color: var(--gold);">Join the Guild</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

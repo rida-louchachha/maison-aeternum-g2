@@ -1,0 +1,83 @@
+@model MaisonAeternum.Application.Assessment.Models.QuizAttemptStartDto
+@using MaisonAeternum.Domain.Enums
+@{
+    ViewData["Title"] = Model.QuizTitle;
+}
+
+<div class="container py-5" style="max-width: 720px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 style="font-size: 1.6rem; margin: 0;">@Model.QuizTitle</h1>
+            <p class="text-secondary-soft mb-0" style="font-size: 0.85rem;">@Model.Questions.Count questions</p>
+        </div>
+        @if (Model.TimeLimitSeconds.HasValue)
+        {
+            <div class="glass-card px-3 py-2" style="font-family: var(--font-display); font-size: 1.3rem;" data-quiz-timer="@Model.TimeLimitSeconds">
+                --:--
+            </div>
+        }
+    </div>
+
+    <form asp-action="Submit" method="post" id="quiz-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="AttemptId" value="@Model.AttemptId" />
+
+        @for (var i = 0; i < Model.Questions.Count; i++)
+        {
+            var question = Model.Questions[i];
+            var inputType = question.Type == QuestionType.MultipleAnswer ? "checkbox" : "radio";
+            <input type="hidden" name="Answers[@i].QuestionId" value="@question.QuestionId" />
+            <div class="glass-card p-4 mb-3">
+                <div class="d-flex justify-content-between text-tertiary-soft mb-2" style="font-size: 0.78rem;">
+                    <span>Question @(i + 1)</span>
+                    <span>@question.Points pts</span>
+                </div>
+                <p style="font-size: 1rem;">@question.Text</p>
+
+                @if (!string.IsNullOrEmpty(question.ImageUrl))
+                {
+                    <img src="@question.ImageUrl" alt="" style="max-width: 100%; border-radius: var(--radius-sm); margin-bottom: 1rem;" />
+                }
+
+                <div class="d-flex flex-column gap-2">
+                    @foreach (var option in question.Options)
+                    {
+                        <label class="d-flex align-items-center gap-2" style="font-size: 0.92rem; cursor: pointer;">
+                            <input type="@inputType" name="Answers[@i].SelectedOptionIds" value="@option.OptionId" />
+                            @option.Text
+                        </label>
+                    }
+                </div>
+            </div>
+        }
+
+        <button type="submit" class="btn-maison-primary w-100">Submit Bench Trial</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var timerEl = document.querySelector('[data-quiz-timer]');
+            if (!timerEl) return;
+            var remaining = parseInt(timerEl.getAttribute('data-quiz-timer'), 10);
+
+            function render() {
+                var m = Math.floor(remaining / 60);
+                var s = remaining % 60;
+                timerEl.textContent = m + ':' + String(s).padStart(2, '0');
+            }
+            render();
+
+            var interval = setInterval(function () {
+                remaining -= 1;
+                if (remaining <= 0) {
+                    clearInterval(interval);
+                    document.getElementById('quiz-form').submit();
+                    return;
+                }
+                render();
+            }, 1000);
+        })();
+    </script>
+}

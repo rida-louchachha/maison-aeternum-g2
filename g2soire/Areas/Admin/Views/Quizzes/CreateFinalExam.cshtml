@@ -1,0 +1,22 @@
+@model MaisonAeternum.Application.Assessment.Models.QuizFormDto
+@{
+    ViewData["Title"] = "New Final Exam";
+}
+
+<div class="mb-4">
+    <h2 style="font-size: 1.4rem;">New Final Exam</h2>
+    <p class="text-secondary-soft">Passing this issues the formation's certificate.</p>
+</div>
+
+<form asp-action="CreateFinalExam" method="post" class="form-maison glass-card p-4" style="max-width: 640px;">
+    @Html.AntiForgeryToken()
+    <partial name="_QuizFields" />
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn-maison-primary">Create final exam</button>
+        <a asp-controller="Formations" asp-action="Edit" asp-route-id="@Model.FormationId" class="btn-maison-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

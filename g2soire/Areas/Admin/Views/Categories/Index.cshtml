@@ -1,0 +1,51 @@
+@model List<MaisonAeternum.Application.Catalog.Models.CategoryDto>
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-size: 1.4rem; margin: 0;">Categories</h2>
+        <p class="text-secondary-soft mb-0">The specializations formations are organized under.</p>
+    </div>
+    <a asp-action="Create" class="btn-maison-primary"><i class="bi bi-plus-lg"></i> New category</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state glass-card">
+        <div class="empty-icon"><i class="bi bi-tags"></i></div>
+        <p>No categories yet. Create the first one to start building the catalog.</p>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var category in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="glass-card p-4 h-100 d-flex flex-column">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <div class="d-flex align-items-center justify-content-center"
+                             style="width: 38px; height: 38px; border-radius: var(--radius-sm); background: color-mix(in srgb, @category.ColorHex 18%, transparent);">
+                            <i class="bi @category.IconClass" style="color: @category.ColorHex;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;">@category.Name</div>
+                            <div class="text-tertiary-soft" style="font-size: 0.78rem;">@category.FormationCount formations</div>
+                        </div>
+                    </div>
+                    <p class="text-secondary-soft flex-grow-1" style="font-size: 0.85rem;">@category.Description</p>
+                    <div class="d-flex gap-2 mt-2">
+                        <a asp-action="Edit" asp-route-id="@category.Id" class="btn-maison-secondary" style="flex:1; text-align:center;">Edit</a>
+                        <form asp-action="Delete" asp-route-id="@category.Id" method="post"
+                              onsubmit="return confirm('Delete &quot;@category.Name&quot;? This cannot be undone if formations reference it.');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-maison-ghost" title="Delete"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

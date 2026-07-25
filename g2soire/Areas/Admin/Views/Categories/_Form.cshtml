@@ -1,0 +1,46 @@
+@model MaisonAeternum.Application.Catalog.Models.CategoryFormDto
+@{
+    var isEdit = Model.Id > 0;
+}
+
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" class="form-maison glass-card p-4" style="max-width: 560px;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name">Name</label>
+        <input asp-for="Name" class="form-control-maison" placeholder="e.g. Grand Complications" />
+        <span asp-validation-for="Name" class="field-validation-error"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description">Description</label>
+        <textarea asp-for="Description" class="form-control-maison" rows="3"></textarea>
+        <span asp-validation-for="Description" class="field-validation-error"></span>
+    </div>
+
+    <div class="row">
+        <div class="col-6 mb-3">
+            <label asp-for="IconClass">Bootstrap Icon class</label>
+            <input asp-for="IconClass" class="form-control-maison" placeholder="bi-gear-wide-connected" />
+            <span asp-validation-for="IconClass" class="field-validation-error"></span>
+        </div>
+        <div class="col-6 mb-3">
+            <label asp-for="ColorHex">Accent color</label>
+            <input asp-for="ColorHex" type="color" class="form-control-maison" style="height: 46px; padding: 0.3rem;" />
+            <span asp-validation-for="ColorHex" class="field-validation-error"></span>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <label asp-for="DisplayOrder">Display order</label>
+        <input asp-for="DisplayOrder" type="number" class="form-control-maison" style="max-width: 140px;" />
+        <span asp-validation-for="DisplayOrder" class="field-validation-error"></span>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn-maison-primary">@(isEdit ? "Save changes" : "Create category")</button>
+        <a asp-action="Index" class="btn-maison-secondary">Cancel</a>
+    </div>
+</form>

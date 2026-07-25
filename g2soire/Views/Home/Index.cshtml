@@ -1,0 +1,183 @@
+@model MaisonAeternum.Web.Models.Home.LandingPageViewModel
+@{
+    ViewData["Title"] = "Maison Aeternum — The Digital House of Horological Mastery";
+}
+
+<!-- ================= HERO ================= -->
+<section class="container" style="padding: 6.5rem 0 5rem;">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <span class="d-inline-flex align-items-center gap-2 px-3 py-2 mb-4 glass-panel" style="border-radius: 999px; font-size: 0.82rem; color: var(--gold);">
+                <i class="bi bi-stars"></i> A new kind of horology guild — trained by masters, mentored by AI
+            </span>
+            <h1 style="font-size: clamp(2.4rem, 5vw, 4rem); line-height: 1.05;">
+                Where time becomes <span class="gradient-text">mastery.</span>
+            </h1>
+            <p class="mt-4 text-secondary-soft" style="font-size: 1.15rem; max-width: 560px;">
+                Maison Aeternum trains apprentices into master watchmakers through guided formations,
+                certifying Bench Trials, and Aurèle — an AI mentor available at every step.
+            </p>
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                <a asp-controller="Account" asp-action="Register" class="btn-maison-primary">
+                    Join the Guild <i class="bi bi-arrow-right"></i>
+                </a>
+                <a href="#formations" class="btn-maison-secondary">Explore Formations</a>
+            </div>
+
+            <div class="d-flex flex-wrap gap-4 gap-lg-5 mt-5 pt-3">
+                <div>
+                    <div class="stat-value" data-countup="@Model.TotalLearners">0</div>
+                    <div class="stat-label">Apprentices trained</div>
+                </div>
+                <div>
+                    <div class="stat-value" data-countup="@Model.TotalFormations">0</div>
+                    <div class="stat-label">Formations offered</div>
+                </div>
+                <div>
+                    <div class="stat-value" data-countup="@Model.CertificatesIssued">0</div>
+                    <div class="stat-label">Certificates issued</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5 d-none d-lg-block">
+            <div class="glass-panel p-4 reveal" style="transform: rotate(-2deg);">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-tertiary-soft" style="font-size: 0.8rem;">GUILD MEMBERSHIP</span>
+                    <i class="bi bi-patch-check-fill" style="color: var(--gold);"></i>
+                </div>
+                <div style="font-family: var(--font-display); font-size: 1.4rem;">Camille Bertrand</div>
+                <div class="text-secondary-soft" style="font-size: 0.85rem;">Certified Horologer · MA-2026-000001</div>
+                <div class="d-flex gap-2 mt-4">
+                    <span class="px-3 py-1" style="border-radius: 999px; background: var(--bg-glass); font-size: 0.78rem; border: 1px solid var(--border-glass);">
+                        <i class="bi bi-fire" style="color: var(--gold);"></i> 34-day streak
+                    </span>
+                    <span class="px-3 py-1" style="border-radius: 999px; background: var(--bg-glass); font-size: 0.78rem; border: 1px solid var(--border-glass);">
+                        <i class="bi bi-award"></i> 8 badges
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= CATEGORIES ================= -->
+<section class="container py-5" id="formations">
+    <div class="reveal">
+        <h2 style="font-size: 1.8rem;">Five paths through the craft</h2>
+        <p class="text-secondary-soft">Every formation belongs to one of the Maison's specializations.</p>
+    </div>
+    <div class="row g-3 mt-2">
+        @foreach (var category in Model.Categories)
+        {
+            <div class="category-chip-col reveal">
+                <div class="glass-card p-3 h-100 text-center">
+                    <div class="mx-auto mb-2 d-flex align-items-center justify-content-center"
+                         style="width: 44px; height: 44px; border-radius: var(--radius-sm); background: color-mix(in srgb, @category.ColorHex 18%, transparent);">
+                        <i class="bi @category.IconClass" style="color: @category.ColorHex; font-size: 1.2rem;"></i>
+                    </div>
+                    <div style="font-size: 0.88rem; font-weight: 600;">@category.Name</div>
+                    <div class="text-tertiary-soft" style="font-size: 0.76rem;">@category.FormationCount formations</div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ================= FEATURED FORMATIONS ================= -->
+<section class="container py-5">
+    <div class="reveal">
+        <h2 style="font-size: 1.8rem;">Featured formations</h2>
+        <p class="text-secondary-soft">Highest-rated training, chosen by the Maison's apprentices.</p>
+    </div>
+    <div class="row g-4 mt-2">
+        @foreach (var formation in Model.FeaturedFormations)
+        {
+            <div class="col-md-6 col-lg-4 reveal">
+                <div class="glass-card h-100 p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: @formation.CategoryColorHex; display: inline-block;"></span>
+                        <span class="text-tertiary-soft" style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;">@formation.CategoryName</span>
+                    </div>
+                    <h3 style="font-size: 1.15rem;">@formation.Title</h3>
+                    <p class="text-secondary-soft flex-grow-1" style="font-size: 0.88rem;">@formation.ShortDescription</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top: 1px solid var(--border-glass);">
+                        <span class="text-tertiary-soft" style="font-size: 0.8rem;"><i class="bi bi-person"></i> @formation.TrainerName</span>
+                        <span style="font-size: 0.8rem; color: var(--gold);"><i class="bi bi-star-fill"></i> @formation.AverageRating.ToString("0.0")</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="text-tertiary-soft" style="font-size: 0.76rem;">@formation.DifficultyLabel · @formation.EstimatedMinutes min</span>
+                        <span class="text-tertiary-soft" style="font-size: 0.76rem;">@formation.EnrollmentCount enrolled</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ================= MEET AURELE ================= -->
+<section class="container py-5" id="aurele">
+    <div class="glass-panel p-4 p-lg-5 reveal">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="d-inline-flex align-items-center gap-2 mb-3" style="color: var(--purple); font-size: 0.82rem;">
+                    <i class="bi bi-soundwave"></i> YOUR AI MENTOR
+                </span>
+                <h2 style="font-size: 1.9rem;">Meet Aurèle.</h2>
+                <p class="text-secondary-soft" style="font-size: 1rem; max-width: 520px;">
+                    Aurèle is the Maison's AI Master-in-Residence — available by voice on every page.
+                    Aurèle introduces formations, answers horology questions, explains quiz mistakes,
+                    and recommends your next best step based on your progress.
+                </p>
+                <ul class="list-unstyled mt-3" style="font-size: 0.9rem;">
+                    <li class="mb-2"><i class="bi bi-check-circle-fill" style="color: var(--teal);"></i>&nbsp; Voice-first, context-aware mentoring</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill" style="color: var(--teal);"></i>&nbsp; Personalized study recommendations</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill" style="color: var(--teal);"></i>&nbsp; Post-exam debriefs on missed questions</li>
+                </ul>
+            </div>
+            <div class="col-lg-5 text-center">
+                <div class="mx-auto d-flex align-items-center justify-content-center"
+                     style="width: 180px; height: 180px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-bright), var(--purple)); box-shadow: 0 20px 60px rgba(139,92,246,0.35);">
+                    <i class="bi bi-stars" style="font-size: 3.5rem; color: #17140a;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= FEATURED TRAINERS ================= -->
+<section class="container py-5">
+    <div class="reveal">
+        <h2 style="font-size: 1.8rem;">Trained by masters</h2>
+        <p class="text-secondary-soft">The Maison's featured Master Watchmakers.</p>
+    </div>
+    <div class="row g-4 mt-2">
+        @foreach (var trainer in Model.FeaturedTrainers)
+        {
+            <div class="col-md-4 reveal">
+                <div class="glass-card h-100 p-4 text-center">
+                    <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                         style="width: 64px; height: 64px; border-radius: 50%; background: var(--bg-glass); border: 1px solid var(--border-glass); font-family: var(--font-display); font-size: 1.3rem; color: var(--gold);">
+                        @trainer.Initials
+                    </div>
+                    <h3 style="font-size: 1.05rem;">@trainer.FullName</h3>
+                    <div class="text-tertiary-soft mb-2" style="font-size: 0.8rem;">@trainer.AtelierAffiliation</div>
+                    <p class="text-secondary-soft" style="font-size: 0.85rem;">@trainer.Biography</p>
+                    <div class="d-flex justify-content-center gap-3 mt-2" style="font-size: 0.8rem;">
+                        <span><i class="bi bi-star-fill" style="color: var(--gold);"></i> @trainer.AverageRating.ToString("0.0")</span>
+                        <span class="text-tertiary-soft">@trainer.YearsOfExperience yrs experience</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ================= CTA BAND ================= -->
+<section class="container pb-5">
+    <div class="glass-panel p-5 text-center reveal" style="background: linear-gradient(120deg, rgba(201,162,75,0.10), rgba(139,92,246,0.08));">
+        <h2 style="font-size: 2rem;">Your apprenticeship begins today.</h2>
+        <p class="text-secondary-soft">Join the Maison and start training under a Master Watchmaker — mentored by Aurèle at every step.</p>
+        <a asp-controller="Account" asp-action="Register" class="btn-maison-primary mt-2">Join the Guild <i class="bi bi-arrow-right"></i></a>
+    </div>
+</section>

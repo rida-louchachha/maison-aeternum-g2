@@ -1,0 +1,241 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- ================= STAT TILES ================= -->
+<div class="row g-3">
+    <div class="col-6 col-lg-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: rgba(201,162,75,0.15); color: var(--gold);"><i class="bi bi-mortarboard"></i></div>
+            <div class="stat-value" data-countup="@Model.TotalLearners">0</div>
+            <div class="stat-label">Apprentices</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: rgba(139,92,246,0.15); color: var(--purple);"><i class="bi bi-person-badge"></i></div>
+            <div class="stat-value" data-countup="@Model.TotalTrainers">0</div>
+            <div class="stat-label">Master Watchmakers</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: rgba(45,212,175,0.15); color: var(--teal);"><i class="bi bi-collection"></i></div>
+            <div class="stat-value" data-countup="@Model.TotalFormations">0</div>
+            <div class="stat-label">Formations</div>
+            <span class="stat-delta up">@Model.ActiveFormations active</span>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: rgba(201,162,75,0.15); color: var(--gold);"><i class="bi bi-patch-check"></i></div>
+            <div class="stat-value" data-countup="@Model.CertificatesIssued">0</div>
+            <div class="stat-label">Certificates issued</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-1">
+    <div class="col-6 col-lg-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: rgba(45,212,175,0.15); color: var(--teal);"><i class="bi bi-tags"></i></div>
+            <div class="stat-value">@Model.TotalCategories</div>
+            <div class="stat-label">Categories</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-tile">
+            <div class="stat-icon" style="background: rgba(244,113,116,0.15); color: #f47174;"><i class="bi bi-archive"></i></div>
+            <div class="stat-value">@Model.ArchivedFormations</div>
+            <div class="stat-label">Archived formations</div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="stat-tile d-flex align-items-center justify-content-between">
+            <div>
+                <div class="stat-label mb-1">Completion rate</div>
+                <div class="stat-value">@Model.CompletionRatePercentage.ToString("0.0")%</div>
+            </div>
+            <div style="width: 55%;">
+                <div style="height: 8px; border-radius: 999px; background: var(--bg-glass); overflow: hidden;">
+                    <div style="height: 100%; width: @(Model.CompletionRatePercentage.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%; background: linear-gradient(90deg, var(--gold), var(--teal)); border-radius: 999px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CHARTS ================= -->
+<div class="row g-3 mt-1">
+    <div class="col-lg-7">
+        <div class="glass-card p-4 h-100">
+            <h3 style="font-size: 1.05rem;">Enrollment trend</h3>
+            <p class="text-tertiary-soft" style="font-size: 0.8rem;">Last 30 days</p>
+            <canvas id="enrollmentTrendChart" height="110"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="glass-card p-4 h-100">
+            <h3 style="font-size: 1.05rem;">Category popularity</h3>
+            <p class="text-tertiary-soft" style="font-size: 0.8rem;">Enrollments by specialization</p>
+            <canvas id="categoryChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ================= HEATMAP ================= -->
+<div class="row g-3 mt-1">
+    <div class="col-12">
+        <div class="glass-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h3 style="font-size: 1.05rem; margin: 0;">Platform activity</h3>
+                    <p class="text-tertiary-soft mb-0" style="font-size: 0.8rem;">Bench minutes logged across all apprentices, last 90 days</p>
+                </div>
+            </div>
+            @if (Model.HeatmapWeeks.Count == 0)
+            {
+                <div class="empty-state py-4">
+                    <div class="empty-icon"><i class="bi bi-calendar3"></i></div>
+                    <p class="mb-0">No activity logged yet.</p>
+                </div>
+            }
+            else
+            {
+                <div class="heatmap-grid">
+                    @foreach (var week in Model.HeatmapWeeks)
+                    {
+                        <div class="d-flex flex-column gap-1">
+                            @foreach (var cell in week)
+                            {
+                                @if (cell.Date.HasValue)
+                                {
+                                    <div class="heatmap-cell" data-level="@cell.Level" title="@cell.Date.Value.ToString("MMM d") — @cell.MinutesSpent min"></div>
+                                }
+                                else
+                                {
+                                    <div class="heatmap-cell" style="background: transparent; border-color: transparent;"></div>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="d-flex align-items-center gap-2 mt-2 text-tertiary-soft" style="font-size: 0.75rem;">
+                    Less
+                    <span class="heatmap-cell" data-level="0"></span>
+                    <span class="heatmap-cell" data-level="1"></span>
+                    <span class="heatmap-cell" data-level="2"></span>
+                    <span class="heatmap-cell" data-level="3"></span>
+                    <span class="heatmap-cell" data-level="4"></span>
+                    More
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ================= RECENT ACTIVITY ================= -->
+<div class="row g-3 mt-1">
+    <div class="col-lg-6">
+        <div class="glass-card p-4 h-100">
+            <h3 style="font-size: 1.05rem;">Recent registrations</h3>
+            @if (Model.RecentRegistrations.Count == 0)
+            {
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="bi bi-person-plus"></i></div>
+                    <p class="mb-0">No apprentices have registered yet.</p>
+                </div>
+            }
+            else
+            {
+                <ul class="list-unstyled mt-3">
+                    @foreach (var reg in Model.RecentRegistrations)
+                    {
+                        <li class="d-flex justify-content-between align-items-center py-2" style="border-bottom: 1px solid var(--border-glass);">
+                            <div>
+                                <div style="font-size: 0.9rem; font-weight: 500;">@reg.FullName</div>
+                                <div class="text-tertiary-soft" style="font-size: 0.78rem;">@reg.RankName</div>
+                            </div>
+                            <span class="text-tertiary-soft" style="font-size: 0.78rem;">@reg.JoinedAt.ToString("MMM d")</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="glass-card p-4 h-100">
+            <h3 style="font-size: 1.05rem;">Recent Bench Trials</h3>
+            @if (Model.RecentQuizAttempts.Count == 0)
+            {
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="bi bi-patch-question"></i></div>
+                    <p class="mb-0">No quiz attempts recorded yet.</p>
+                </div>
+            }
+            else
+            {
+                <ul class="list-unstyled mt-3">
+                    @foreach (var attempt in Model.RecentQuizAttempts)
+                    {
+                        <li class="d-flex justify-content-between align-items-center py-2" style="border-bottom: 1px solid var(--border-glass);">
+                            <div>
+                                <div style="font-size: 0.9rem; font-weight: 500;">@attempt.LearnerName</div>
+                                <div class="text-tertiary-soft" style="font-size: 0.78rem;">@attempt.QuizTitle</div>
+                            </div>
+                            <span class="stat-delta @(attempt.Passed ? "up" : "down")">@attempt.ScorePercentage.ToString("0")%</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const chartTextColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() || '#a7a4b0';
+        const gridColor = 'rgba(150,150,160,0.12)';
+
+        new Chart(document.getElementById('enrollmentTrendChart'), {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Model.EnrollmentTrendLabelsJson),
+                datasets: [{
+                    label: 'Enrollments',
+                    data: @Html.Raw(Model.EnrollmentTrendDataJson),
+                    borderColor: '#c9a24b',
+                    backgroundColor: 'rgba(201,162,75,0.15)',
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 0,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: chartTextColor, maxTicksLimit: 8 }, grid: { display: false } },
+                    y: { ticks: { color: chartTextColor }, grid: { color: gridColor }, beginAtZero: true }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Model.CategoryLabelsJson),
+                datasets: [{
+                    data: @Html.Raw(Model.CategoryDataJson),
+                    backgroundColor: @Html.Raw(Model.CategoryColorsJson),
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom', labels: { color: chartTextColor, boxWidth: 10, font: { size: 11 } } } },
+                cutout: '65%'
+            }
+        });
+    </script>
+}

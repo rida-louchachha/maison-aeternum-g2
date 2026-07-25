@@ -1,0 +1,15 @@
+@model MaisonAeternum.Application.Catalog.Models.CategoryFormDto
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<div class="mb-4">
+    <h2 style="font-size: 1.4rem;">Edit Category</h2>
+    <p class="text-secondary-soft">@Model.Name</p>
+</div>
+
+<partial name="_Form" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

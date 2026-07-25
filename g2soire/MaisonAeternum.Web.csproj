@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\MaisonAeternum.Application\MaisonAeternum.Application.csproj" />
+    <ProjectReference Include="..\MaisonAeternum.Infrastructure\MaisonAeternum.Infrastructure.csproj" />
+    <ProjectReference Include="..\MaisonAeternum.Domain\MaisonAeternum.Domain.csproj" />
+    <ProjectReference Include="..\MaisonAeternum.Common\MaisonAeternum.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.29">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

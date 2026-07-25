@@ -1,0 +1,15 @@
+@model MaisonAeternum.Application.Catalog.Models.FormationFormDto
+@{
+    ViewData["Title"] = "New Formation";
+}
+
+<div class="mb-4">
+    <h2 style="font-size: 1.4rem;">New Formation</h2>
+    <p class="text-secondary-soft">Created as a draft — publish it once modules and a final exam are ready.</p>
+</div>
+
+<partial name="_Form" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

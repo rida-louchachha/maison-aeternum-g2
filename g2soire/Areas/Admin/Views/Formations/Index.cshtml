@@ -1,0 +1,87 @@
+@model List<MaisonAeternum.Application.Catalog.Models.FormationAdminDto>
+@{
+    ViewData["Title"] = "Formations";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-size: 1.4rem; margin: 0;">Formations</h2>
+        <p class="text-secondary-soft mb-0">Every training program in the Maison's catalog.</p>
+    </div>
+    <a asp-action="Create" class="btn-maison-primary"><i class="bi bi-plus-lg"></i> New formation</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state glass-card">
+        <div class="empty-icon"><i class="bi bi-mortarboard"></i></div>
+        <p>No formations yet. Create the first one.</p>
+    </div>
+}
+else
+{
+    <div class="glass-card" style="overflow-x: auto;">
+        <table class="w-100" style="border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-glass); text-align: left;">
+                    <th class="p-3">Title</th>
+                    <th class="p-3">Category</th>
+                    <th class="p-3">Trainer</th>
+                    <th class="p-3">Difficulty</th>
+                    <th class="p-3">Modules</th>
+                    <th class="p-3">Enrolled</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var formation in Model)
+                {
+                    <tr style="border-bottom: 1px solid var(--border-glass);">
+                        <td class="p-3" style="font-weight: 500;">@formation.Title</td>
+                        <td class="p-3 text-secondary-soft">@formation.CategoryName</td>
+                        <td class="p-3 text-secondary-soft">@formation.TrainerName</td>
+                        <td class="p-3 text-secondary-soft">@formation.Difficulty</td>
+                        <td class="p-3 text-secondary-soft">@formation.ModuleCount</td>
+                        <td class="p-3 text-secondary-soft">@formation.EnrollmentCount</td>
+                        <td class="p-3">
+                            @{
+                                var badgeClass = formation.Status switch
+                                {
+                                    MaisonAeternum.Domain.Enums.FormationStatus.Published => "up",
+                                    MaisonAeternum.Domain.Enums.FormationStatus.Archived => "down",
+                                    _ => ""
+                                };
+                            }
+                            <span class="stat-delta @badgeClass">@formation.Status</span>
+                        </td>
+                        <td class="p-3">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a asp-action="Edit" asp-route-id="@formation.Id" class="btn-maison-ghost" title="Edit"><i class="bi bi-pencil"></i></a>
+                                @if (formation.Status != MaisonAeternum.Domain.Enums.FormationStatus.Published)
+                                {
+                                    <form asp-action="Publish" asp-route-id="@formation.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-maison-ghost" title="Publish"><i class="bi bi-upload"></i></button>
+                                    </form>
+                                }
+                                @if (formation.Status != MaisonAeternum.Domain.Enums.FormationStatus.Archived)
+                                {
+                                    <form asp-action="Archive" asp-route-id="@formation.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-maison-ghost" title="Archive"><i class="bi bi-archive"></i></button>
+                                    </form>
+                                }
+                                <form asp-action="Delete" asp-route-id="@formation.Id" method="post"
+                                      onsubmit="return confirm('Delete &quot;@formation.Title&quot;?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-maison-ghost" title="Delete"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
